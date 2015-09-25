@@ -1,0 +1,13 @@
+function vout = prolongate(v,nf)
+
+nc = size(v,1);
+Pbar = zeros(nf,nc);
+
+for i = 1:(nc-1)
+    Pbar((2*i-1):2*i,i:(i+1)) = [1 0;.5 .5];
+end
+Pbar(nf,nc) = 1;
+
+P = kron(Pbar,Pbar);
+
+vout = P*v;

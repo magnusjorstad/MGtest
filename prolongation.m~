@@ -1,0 +1,12 @@
+function P = prolongation(Nc,Nf)
+% Map from coarse to fine
+nc = sqrt(
+
+Pbar = zeros(nf,nc);
+
+for i = 1:(nc-1)
+    Pbar((2*i-1):2*i,i:(i+1)) = [1 0;.5 .5];
+end
+Pbar(nf,nc) = 1;
+
+P = kron(Pbar,Pbar);
