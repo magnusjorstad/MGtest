@@ -1,5 +1,5 @@
 clear all
-n = 159;
+n = 3;
 c1 = 10; c2 = 1; % anisotropic
 T = blktridiag(2*(c1+c2),-c1,-c1,n);
 A = blktridiag(T,-c2*speye(n),-c2*speye(n),n);
@@ -10,13 +10,19 @@ L = tril(D-A);
 g = -9.81;
 h = 1/(n+1);
 b = h^2*g*ones(n^2,1);
-midpoint = n*floor(n/2)+ceil(n/2);
-
-
 
 U = A\b;
 
-Ubar = zeros((n+2)^2);
+%% solving with multiple v-cycles
+error = error0;
+k = 0;
+while error/error0 > 1e-6 && k<100
+    x = MV(A,b,Mssor,m,x,Rf,IR);
+    error = sqrt((x-x_sol)'*A*(x-x_sol));
+    k = k + 1;
+end
+
+%% Plotting
 Uxy = reshape(U,n,n);
 Ubar = zeros(n+2,n+2);
 Ubar(2:end-1,2:end-1) = Uxy;

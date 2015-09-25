@@ -8,6 +8,7 @@ if nargin < 3
 omega = 1;
 end
 Mssor = 0.25*(D-omega*L)*(D-omega*L')/(omega*(2-omega));
+Mrbgs = L*D\L';
 
 
 %% Defining system
@@ -33,7 +34,7 @@ nc = 2^(log2(n+1)-1)-1;
 Ir = sparse([eye(nc);zeros(n-nc,nc)]);
 IR = kron(Ir,Ir);
 while error/error0 > 1e-6 && k<100
-    x = MV(A,b,Mssor,m,x,Rf,IR);
+    x = MV(A,b,Mrbgs,m,x);
     error = sqrt((x-x_sol)'*A*(x-x_sol));
     k = k + 1;
 end
