@@ -24,25 +24,9 @@ else
     
     vhat = MV(Ac,rc,Mc,m,zeros(Nc,1));
     
-    nc = size(vhat,1);
-    P = prolongation(nc,nf);
+    %nc = size(vhat,1);
+    %P = prolongation(nc,nf);
     v = v + P*vhat;
-    
-%     
-%     %Mappings, Rf:fine->coarse, I:coarse->fine
-%     nc = 2^(log2(nf+1)-1)-1;
-%     ncc = max(2^(log2(nc+1)-1)-1,1);
-%     Il = sparse([eye(ncc) zeros(ncc,nc-ncc)]);
-%     IL = kron(Il,Il);
-%     
-%     If = 4*Rf';
-%     %Rf*(f-A*v)
-%     %Compute error on coarser grid
-%     vhat = MV(Rf*A*If,Rf*(f-A*v),Rf*M*If,m,zeros(size(Rf*f)),IL*Rf*IR,IL');
-%     
-%     %Coarse grid correction
-%     v = v + If*vhat;
-%     
 
     %Post-smoothing m times
     for i = 1:m
