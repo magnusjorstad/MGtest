@@ -12,21 +12,25 @@ Mjac = D;
 g = -9.81;
 h = 1/(n+1);
 b = h^2*g*ones(n^2,1);
-
-%U = A\b;
+% if n == 225
+%     load('randb_p4.mat');
+% else 
+%     warning('n must be 225 if this b is to be used');
+%     break
+% end
 
 %% solving with multiple v-cycles
-U = zeros(n^2,1);
+x = zeros(n^2,1);
 m = 2;
 resid_norm0 = sqrt(b'*b);
 resid_norm = resid_norm0;
 k = 0;
-while resid_norm/resid_norm0 > 1e-4 && k<100
-    x = MV(A,b,Mjac,m,U);
+while resid_norm/resid_norm0 > 1e-4 && k<1000
+    x = MV(A,b,Mjac,m,x);
     resid_norm = sqrt((A*x-b)'*(A*x-b));
     k = k + 1;
 end
-
+k
 %% Plotting
 Uxy = reshape(x,n,n);
 Ubar = zeros(n+2,n+2);
