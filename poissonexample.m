@@ -1,8 +1,16 @@
 clear all
-n = 2^5-1; % (generalization needed)
-c1 = 1; c2 = 1; % anisotropic
-T = blktridiag(2*(c1+c2),-c1,-c1,n);
-A = blktridiag(T,-c2*speye(n),-c2*speye(n),n);
+n = 2^3-1; % (generalization needed)
+h = 1/(n+1);
+c = @(x,y) 1; 
+
+x = h:h:1-h;
+y = x;
+domain = [x;y];
+
+A = makematrix(domain,c);
+
+break
+
 D = diag(diag(A));
 L = tril(D-A);
 Mrbgs = L*(D\L');
@@ -10,7 +18,7 @@ Mjac = D;
 
 %% Defining system
 g = -9.81;
-h = 1/(n+1);
+
 b = h^2*g*ones(n^2,1);
 % if n == 225
 %     load('randb_p4.mat');
