@@ -5,10 +5,10 @@ x = domain(1,:)'; %column vector
 y = domain(2,:)'; %column vector
 
 n = size(x,1); % assume nx=ny
-h = x(1)-x(2); % assume uniform partitioning
+h = x(2)-x(1); % assume uniform partitioning
 
-Tj = @(x,yj) spdiags(c(x+h/2,yj)+c(x-h/2,yj)+c(x,yj-h/2)+c(x,yj+h/2),0,n,n);  
-cIj = @(x,yj) spdiags(c(x,yj+h/2),0,n,n);
+Tj = @(x,yj) spdiags([-c(x+h/2,yj) c(x+h/2,yj)+c(x-h/2,yj)+c(x,yj-h/2)+c(x,yj+h/2) -c(x-h/2,yj)],[-1 0 1],n,n);  
+cIj = @(x,yj) spdiags([c(x,yj+h/2)],0,n,n);
 
 Amd = zeros(n,n,n);
 As = zeros(n,n,n-1);
