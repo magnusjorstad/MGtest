@@ -1,14 +1,22 @@
-function A = makematrix(domain,c)
+function A = makematrix(domain,n,c)
 % produce the matrix for div(c*grad(u))
 
-x = domain(1,:)'; %column vector
-y = domain(2,:)'; %column vector
+x = linspace(domain{1}(1),domain{1}(2),n)';
+y = linspace(domain{2}(1),domain{2}(2),n)';
 
-n = size(x,1); % assume nx=ny
-h = x(2)-x(1); % assume uniform partitioning
+h = (domain{1}(2)-domain{1}(1))/(n+1);
 
-Tj = @(x,yj) spdiags([-c(x+h/2,yj) c(x+h/2,yj)+c(x-h/2,yj)+c(x,yj-h/2)+c(x,yj+h/2) -c(x-h/2,yj)],[-1 0 1],n,n);  
-cIj = @(x,yj) spdiags([c(x,yj+h/2)],0,n,n);
+% x = domain(1,:)'; %column vector
+% y = domain(2,:)'; %column vector
+
+% n = size(x,1); % assume nx=ny
+% h = x(2)-x(1); % assume uniform partitioning
+
+Tj = @(x,yj) spdiags([-c(x+h/2,yj)...
+    c(x+h/2,yj)+c(x-h/2,yj)+c(x,yj-h/2)+c(x,yj+h/2)...
+    -c(x-h/2,yj)],[-1 0 1],n,n);  
+
+cIj = @(x,yj) spdiags(c(x,yj+h/2),0,n,n);
 
 Amd = zeros(n,n,n);
 As = zeros(n,n,n-1);

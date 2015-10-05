@@ -1,44 +1,34 @@
 clear all
-n = 2^5-1; % (generalization needed)
+n = 2^7-1; % (generalization needed)
 h = 1/(n+1);
-c = @(x,y) 5 + 2*cos(4*pi*x) + 2*cos(2*pi*y); 
+c = @(x,y) 1 + 10*heaviside(x-0.2) - 10*heaviside(x-0.4) + ...
+    10*heaviside(x-0.6) - 10*heaviside(x-0.8) + ...
+    10*heaviside(y-0.2) - 10*heaviside(y-0.4) + ...
+    10*heaviside(y-0.6) - 10*heaviside(y-0.8);
 
-x = h:h:1-h;
-y = x;
-domain = [x;y];
+% x = h:h:1-h;
+% y = x;
+domain{1} = [0 1];
+domain{2} = [0 1];
+%showcoeff(c,domain);
 
-A = makematrix(domain,c);
+A = makematrix(domain,n,c);
 
-% Make smoother
-D = diag(diag(A));
-L = tril(D-A);
-Mrbgs = L*(D\L');
-Mjac = D;
-
-%% Defining system
+%% RHS
 g = -9.81;
-
 b = h^2*g*ones(n^2,1);
 % if n == 225
 %     load('randb_p4.mat');
 % else 
-%     warning('n must be 225 if this b is to be used');
+%     warning('n must be 2^4-1=225 if this b is to be used');
 %     break
 % end
-tic
-%% solving with multiple v-cycles
-x = zeros(n^2,1);
-m = 4;
-resid_norm0 = sqrt(b'*b);
-resid_norm = resid_norm0;
-k = 0;
-while resid_norm/resid_norm0 > 1e-4 && k<1000
-    x = MV(A,b,Mjac,m,x);
-    resid_norm = sqrt((A*x-b)'*(A*x-b));
-    k = k + 1;
-end
-toc
-k
+
+
+%% solving with multigrid
+[x,k] = MG(A,b,domain,c);
+
+
 %% Plotting
 Uxy = reshape(x,n,n);
 Ubar = zeros(n+2,n+2);

@@ -1,4 +1,4 @@
-function P = prolongation(Nc,Nf)
+function P = lin_interp(Nc,Nf)
 % Map from coarse to fine
 nc = sqrt(Nc);
 nf = sqrt(Nf);
@@ -10,4 +10,4 @@ for i = 1:nc
 end
 
 
-P = kron(Pbar,Pbar);
+P = sparse(kron(Pbar,Pbar));

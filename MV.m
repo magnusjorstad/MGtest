@@ -1,20 +1,18 @@
-function v = MV(A,f,M,m,v0)
+function v = MV(A,f,M,m,v0,Plist,Nlist,l,L)
 % Recursive multigrid V-cycle. 2D grid, n blocks of size n, n=2^k-1
-N = length(v0);
-Nc = ((sqrt(N)-1)/2)^2;
-v = v0;
 
-if N < 10
+if l == 1
     v = A\f; %Exact solution
 else
-    
+    v = v0;
+    Nc = Nlist(l-1);
     %Pre-smoothing m times
     for i = 1:m
         v  = M\((M-A)*v+f);       
     end
     
-    % Prolongation operator. Restriction is defined as R = P'/4
-    P = prolongation(Nc,N);
+    % Prolongation operator. P: G(l-1) -> G(l), R := P'/4
+    P = Plist{l};
     
     % Coarse grid parameters and variables
     r = f-A*v;
@@ -22,10 +20,8 @@ else
     rc = 4\P'*r;
     Mc = 4\P'*M*P;
     
-    vhat = MV(Ac,rc,Mc,m,zeros(Nc,1));
+    vhat = MV(Ac,rc,Mc,m,zeros(Nc,1),Plist,Nlist,l-1,L);
     
-    %nc = size(vhat,1);
-    %P = prolongation(nc,nf);
     v = v + P*vhat;
 
     %Post-smoothing m times
