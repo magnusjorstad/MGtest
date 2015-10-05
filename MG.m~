@@ -1,27 +1,34 @@
-function [x,k] = MG(A,b)
+function [x,k] = MG(A,b,domain,c)
 
 N = size(A,1);
-m = 4;
+m = 2;
 
 % Make smoother
 D = diag(diag(A));
-[L,U] = lu(A);
-D = diag(A);
-L = L - D;
-Mrbgs = L*inv(D)*U;
+L = tril(A);
+Mgs = L;
 Mjac = D;
+omega = 1;
+Mssor = 0.25*(D-omega*L)*(D-omega*L')/(omega*(2-omega));
 
-[L,Plist,Nlist] = setup(N);
+
+% Set up prolongation operators for all grids
+tic
+[L,Plist,Nlist] = setup(N,domain,c);
+fprintf(1,'Setup time: ')
+toc
 
 
+tic
 resid_norm0 = sqrt(b'*b);
 resid_norm = resid_norm0;
 x = zeros(Nlist(L),1);
 k = 0;
 while resid_norm/resid_norm0 > 1e-4 && k<1000
-    x = MV(A,b,Mjac,m,x,Plist,Nlist,L,L);
+    x = Mcycle(A,b,Mssor,m,x,Plist,Nlist,L,L);
     resid_norm = sqrt((A*x-b)'*(A*x-b));
     k = k + 1;
 end
-
+fprintf(1,'MG solve time: ')
+toc
 end

@@ -1,13 +1,8 @@
 clear all
-n = 2^7-1; % (generalization needed)
+n = 2^6-1; % (generalization needed)
 h = 1/(n+1);
-c = @(x,y) 1 + 10*heaviside(x-0.2) - 10*heaviside(x-0.4) + ...
-    10*heaviside(x-0.6) - 10*heaviside(x-0.8) + ...
-    10*heaviside(y-0.2) - 10*heaviside(y-0.4) + ...
-    10*heaviside(y-0.6) - 10*heaviside(y-0.8);
+c = @(x,y) 1 + 100*(heaviside(x-0.2)-heaviside(x-0.8));
 
-% x = h:h:1-h;
-% y = x;
 domain{1} = [0 1];
 domain{2} = [0 1];
 %showcoeff(c,domain);
