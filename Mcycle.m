@@ -17,11 +17,7 @@ else
     
     % Restriction
     [rc,Ac,Mc] = res(f-A*v,A,M,P);
-%     r = f-A*v;
-%     Ac = 4\P'*A*P;
-%     rc = 4\P'*r;
-%     Mc = 4\P'*M*P;
-    
+
     %Coarse grid solution
     vhat = Mcycle(Ac,rc,Mc,m,zeros(Nc,1),Plist,Nlist,l-1,L);
     

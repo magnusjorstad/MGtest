@@ -1,4 +1,4 @@
-function [x, k, gamma,error] = pCG(x0, A, M, b,xsol, mit, stol, bbA, bbM)
+function [x, k, gamma,error] = pCG(x0, A, M, b,xsol, mit, stol, bbA, bbM,Plist,Nlist,l,L)
 % Synopsis:
 % x0: initial point
 % A: Matrix A of the system Ax=b
@@ -24,19 +24,15 @@ k = 0;
 e0 = x-xsol;e = e0;gamma = 0;error(1) = e0'*A*e0;
 
 % MG parameters
-N = size(x,1);
 L = tril(A);
 Mgs = L;
 m = 2;
-tic
-[L,Plist,Nlist] = setup(N,17,17); % 17 is dummy when lin_interp is used
-fprintf(1,'MG setup: ');
-toc
+[L,Plist,Nlist] = setup(N,1,1); % 1,1 dummy when lin_interp is used
 
-tic
+
 r = b - bbA(A, x0); % <--- r = b - A * x0;
 while ( (e'*A*e)/(e0'*A*e0) > stol ),
-    z = Mcycle(A,r,Mgs,m,zeros(size(r)),Plist,Nlist,L,L) ; % <--- z = M \ r;
+    z = Mcycle(A,r,Mgs,m,zeros(z,1),Plist,Nlist,L,L) ; % <--- z = M \ r;
     k = k + 1;
     if ( k == mit ), warning('GCP:MAXIT', 'mit reached, no conversion.'); return; end;
     
@@ -58,5 +54,3 @@ while ( (e'*A*e)/(e0'*A*e0) > stol ),
     e = x-xsol;error(k+1) = e'*A*e;
     gamma(k) = sqrt((e'*A*e)/(eprev'*A*eprev));
 end;
-fprintf(1,'pCG solve: ');
-toc
